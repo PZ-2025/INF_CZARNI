@@ -31,6 +31,9 @@ public class TaskService implements ITaskService {
     @Autowired
     private TaskAssignmentRepository taskAssignmentRepository;
 
+    @Autowired
+    private LogService logService;
+
     @Override
     public List<Task> findAll() {
         return taskRepository.findAll();
@@ -75,6 +78,26 @@ public class TaskService implements ITaskService {
     
             // Save the task only once after setting all relationships
             Task savedTask = taskRepository.save(newTask);
+
+            //log
+            StringBuilder details = new StringBuilder();
+            details.append("Created task: ").append(savedTask.getTaskName());
+            details.append(", Priority: ").append(savedTask.getPriority());
+            details.append(", Status: ").append(savedTask.getStatus());
+
+            if (savedTask.getOrder() != null) {
+                details.append(", Order ID: ").append(savedTask.getOrder().getId());
+            }
+
+            if (savedTask.getAssignedUser() != null) {
+                details.append(", Assigned to: ")
+                        .append(savedTask.getAssignedUser().getFirstName())
+                        .append(" ")
+                        .append(savedTask.getAssignedUser().getLastName());
+            }
+
+            logService.createLog("CREATE", "Task", savedTask.getId(), details.toString());
+
             System.out.println("Saved task ID: " + savedTask.getId());
             System.out.println("Saved task order ID: " + (savedTask.getOrder() != null ? savedTask.getOrder().getId() : "null"));
             System.out.println("Saved task user ID: " + (savedTask.getAssignedUser() != null ? savedTask.getAssignedUser().getId() : "null"));
@@ -96,6 +119,7 @@ public class TaskService implements ITaskService {
             e.printStackTrace();
             throw new RuntimeException("Error creating task: " + e.getMessage(), e);
         }
+
     }
 
     @Override

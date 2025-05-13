@@ -45,8 +45,9 @@ public class SecurityConfig {
                         .requestMatchers("/clients/**").authenticated()
                         .requestMatchers("/users/me").authenticated()
                         .requestMatchers("/tasks/**").authenticated()
-                        .requestMatchers("/reports/**").authenticated() // Dodana linia dla endpointów raportu
-                        .requestMatchers("/api/task-report").authenticated() // Dodana linia dla alternatywnego endpointu
+                        .requestMatchers("/logs/**").authenticated() // Dodana linia dla endpointów logów
+                        .requestMatchers("/reports/**").authenticated()
+                        .requestMatchers("/api/task-report").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
