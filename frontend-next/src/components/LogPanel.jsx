@@ -24,11 +24,14 @@ const LogPanel = ({ isOpen, onClose }) => {
 
             const response = await fetch(url, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`, // Upewnij się, że token jest właściwie formatowany
+                    'Accept': 'application/json'
                 }
             });
 
             if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`Błąd ${response.status}: ${errorText}`);
                 throw new Error(`Błąd: ${response.status}`);
             }
 
