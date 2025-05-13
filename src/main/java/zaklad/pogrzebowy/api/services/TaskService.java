@@ -80,23 +80,29 @@ public class TaskService implements ITaskService {
             Task savedTask = taskRepository.save(newTask);
 
             //log
-            StringBuilder details = new StringBuilder();
-            details.append("Created task: ").append(savedTask.getTaskName());
-            details.append(", Priority: ").append(savedTask.getPriority());
-            details.append(", Status: ").append(savedTask.getStatus());
+            try {
+                StringBuilder details = new StringBuilder();
+                details.append("Created task: ").append(savedTask.getTaskName());
+                details.append(", Priority: ").append(savedTask.getPriority());
+                details.append(", Status: ").append(savedTask.getStatus());
 
-            if (savedTask.getOrder() != null) {
-                details.append(", Order ID: ").append(savedTask.getOrder().getId());
+                if (savedTask.getOrder() != null) {
+                    details.append(", Order ID: ").append(savedTask.getOrder().getId());
+                }
+
+                if (savedTask.getAssignedUser() != null) {
+                    details.append(", Assigned to: ")
+                            .append(savedTask.getAssignedUser().getFirstName())
+                            .append(" ")
+                            .append(savedTask.getAssignedUser().getLastName());
+                }
+
+                logService.createLog("CREATE", "Task", savedTask.getId(), details.toString());
+                System.out.println("Log created for task: " + savedTask.getId());
+            } catch (Exception logError) {
+                System.out.println("Error creating log: " + logError.getMessage());
+                logError.printStackTrace();
             }
-
-            if (savedTask.getAssignedUser() != null) {
-                details.append(", Assigned to: ")
-                        .append(savedTask.getAssignedUser().getFirstName())
-                        .append(" ")
-                        .append(savedTask.getAssignedUser().getLastName());
-            }
-
-            logService.createLog("CREATE", "Task", savedTask.getId(), details.toString());
 
             System.out.println("Saved task ID: " + savedTask.getId());
             System.out.println("Saved task order ID: " + (savedTask.getOrder() != null ? savedTask.getOrder().getId() : "null"));

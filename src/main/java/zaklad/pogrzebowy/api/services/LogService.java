@@ -32,8 +32,8 @@ public class LogService {
         // Pobierz zalogowanego użytkownika
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getName() != null) {
-            String username = authentication.getName();
-            User user = userRepository.findByUsername(username).orElse(null);
+            String email = authentication.getName(); // zwraca email
+            User user = userRepository.findByEmail(email).orElse(null);
             log.setUser(user);
         }
 

@@ -2,9 +2,11 @@ package zaklad.pogrzebowy.api.models;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "logs")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Log {
 
     @Id
@@ -27,9 +29,10 @@ public class Log {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"passwordHash", "plainPassword"})
     private User user;
 
-    // Getters i Setters
+    // Getters and Setters
     public Long getId() {
         return id;
     }

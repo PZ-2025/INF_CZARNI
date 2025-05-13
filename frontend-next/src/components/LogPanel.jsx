@@ -1,10 +1,11 @@
-// LogPanel.jsx
+// src/components/LogPanel.jsx
 import { useState, useEffect } from 'react';
 
 const LogPanel = ({ isOpen, onClose }) => {
     const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState('all'); // all, task, order, user, etc.
+    const [filter, setFilter] = useState('all'); // all, Task, Order, User, Client, etc.
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         if (isOpen) {
@@ -15,6 +16,7 @@ const LogPanel = ({ isOpen, onClose }) => {
     const fetchLogs = async () => {
         try {
             setLoading(true);
+            setError(null);
             const token = localStorage.getItem('token');
             let url = 'http://localhost:8080/logs';
 
@@ -22,29 +24,35 @@ const LogPanel = ({ isOpen, onClose }) => {
                 url = `http://localhost:8080/logs/entity/${filter}`;
             }
 
+            console.log('Fetching logs from:', url);
+
             const response = await fetch(url, {
                 headers: {
-                    'Authorization': `Bearer ${token}`, // Upewnij się, że token jest właściwie formatowany
+                    'Authorization': `Bearer ${token}`,
                     'Accept': 'application/json'
                 }
             });
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error(`Błąd ${response.status}: ${errorText}`);
-                throw new Error(`Błąd: ${response.status}`);
+                console.error(`Error ${response.status}: ${errorText}`);
+                setError(`Błąd ${response.status}: Nie można pobrać logów`);
+                throw new Error(`Error: ${response.status}`);
             }
 
             const data = await response.json();
+            console.log('Logs received:', data);
             setLogs(data);
         } catch (error) {
-            console.error('Błąd podczas pobierania logów:', error);
+            console.error('Error fetching logs:', error);
+            setError(`Błąd: ${error.message}`);
         } finally {
             setLoading(false);
         }
     };
 
     const formatDateTime = (dateTimeStr) => {
+        if (!dateTimeStr) return 'N/A';
         const date = new Date(dateTimeStr);
         return date.toLocaleString('pl-PL');
     };
@@ -84,6 +92,16 @@ const LogPanel = ({ isOpen, onClose }) => {
                     {loading ? (
                         <div className="text-center py-8">
                             <p className="text-gray-400">Ładowanie logów...</p>
+                        </div>
+                    ) : error ? (
+                        <div className="text-center py-8">
+                            <p className="text-red-400">{error}</p>
+                            <button
+                                onClick={fetchLogs}
+                                className="mt-2 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm"
+                            >
+                                Spróbuj ponownie
+                            </button>
                         </div>
                     ) : logs.length === 0 ? (
                         <div className="text-center py-8">

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Navigation from '../layouts/Navigation.jsx';
-import LogPanel from '../layouts/LogPanel.jsx';
+import LogPanel from '../components/LogPanel.jsx';
 
 const RootLayout = ({ token, setToken }) => {
     const [isLogPanelOpen, setIsLogPanelOpen] = useState(false);

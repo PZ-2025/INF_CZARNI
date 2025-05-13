@@ -45,7 +45,7 @@ public class SecurityConfig {
                         .requestMatchers("/clients/**").authenticated()
                         .requestMatchers("/users/me").authenticated()
                         .requestMatchers("/tasks/**").authenticated()
-                        .requestMatchers("/logs/**").authenticated() // Dodana linia dla endpointów logów
+                        .requestMatchers("/logs/**").authenticated()
                         .requestMatchers("/reports/**").authenticated()
                         .requestMatchers("/api/task-report").authenticated()
                         .anyRequest().authenticated()
