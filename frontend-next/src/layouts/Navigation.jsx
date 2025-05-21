@@ -47,7 +47,7 @@ const Navigation = ({ token, handleLogout }) => {
       )}
       {token && userRole === 'USER' && (
         <span className="text-gray-500 cursor-not-allowed">
-          📊 Raporty
+          📊 Zamówienia
         </span>
       )}
       {!token && (
