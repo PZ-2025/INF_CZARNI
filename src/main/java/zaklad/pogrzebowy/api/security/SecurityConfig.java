@@ -40,29 +40,42 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        // Allow all static resources (React frontend)
+                        .requestMatchers("/", "/index.html", "/static/**", "/assets/**", "/*.js", "/*.css", "/*.png", "/*.jpg", "/*.gif", "/*.ico", "/*.svg", "/vite.svg").permitAll()
+
+                        // Allow auth endpoints
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/users/**").permitAll()
+
+                        // Allow H2 console
+                        .requestMatchers("/h2-console/**").permitAll()
+
+                        // API endpoints require authentication
+                        .requestMatchers("/users/**").permitAll() // Temporary - change to authenticated later
                         .requestMatchers("/tasks/assigned").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/tasks/**").hasAnyRole("USER", "ADMIN") // Allow both roles to access tasks
+                        .requestMatchers("/tasks/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/clients/**").authenticated()
-                        .requestMatchers("/users/me").authenticated()
+                        .requestMatchers("/orders/**").authenticated()
                         .requestMatchers("/reports/**").authenticated()
-                        .requestMatchers("/api/task-report").authenticated()
+                        .requestMatchers("/assignments/**").authenticated()
+
+                        // All other requests require authentication
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                // Disable frame options for H2 console
+                .headers(headers -> headers.frameOptions().disable())
                 .build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Explicit origin
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:8080"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
-        configuration.setExposedHeaders(Arrays.asList("Content-Disposition")); // Dodane dla pobierania raportów
+        configuration.setExposedHeaders(Arrays.asList("Content-Disposition"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
