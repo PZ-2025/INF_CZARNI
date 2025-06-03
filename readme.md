@@ -4,7 +4,7 @@
 
 Aplikacja zarządzania zakładem pogrzebowym zbudowana w technologii **React + Spring Boot + H2 Database**. Installer umożliwia dystrybucję aplikacji jako standalone executable bez konieczności instalacji dodatkowych zależności na komputerze użytkownika końcowego.
 
-## 🏗Architektura rozwiązania
+## Architektura rozwiązania
 
 ### Backend
 - **Spring Boot 3.x** - framework aplikacyjny
@@ -105,7 +105,7 @@ const response = await fetch('http://localhost:8080/auth/login', {
 });
 ```
 
-## 🚀 Proces buildowania
+## Proces buildowania
 
 ### 1. Build skrypty
 
